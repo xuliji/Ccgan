@@ -1,8 +1,16 @@
+from comet_ml import Experiment
+from tqdm import tqdm
 from modules import Generator, Discriminator
 from dataset import MyDataset
 import torch
 import numpy as np
 from torch.autograd import Variable
+
+experiment = Experiment(
+    api_key="93lqYGCEkdfNVApUyjBxYCE2e",
+    project_name="ccgan",
+    workspace="xuliji",
+)
 
 
 # Loss function
@@ -33,8 +41,9 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=lr, betas=(0.5, 0.
 FloatTensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
 
-n_epochs = 500
-for epoch in range(n_epochs):
+n_epochs = 200
+step = 0
+for epoch in tqdm(range(n_epochs)):
     for i, (labels, shapes) in enumerate(dataloader):
         batch_size = shapes.shape[0]
         # Adversarial ground truths
@@ -68,10 +77,15 @@ for epoch in range(n_epochs):
         d_loss = (d_real_loss + d_fake_loss) / 2
         d_loss.backward()
         optimizer_D.step()
-        print(
-            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
-            % (epoch, n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
-        )
-torch.save(generator.state_dict(), './generator.pth')
+        step += 1
+        experiment.log_metric("d_loss", d_loss.item(), step=step)
+        experiment.log_metric("g_loss", g_loss.item(), step=step)
 
+        # print(
+        #     "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+        #     % (epoch, n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+        # )
+
+torch.save(generator.state_dict(), './generator.pth')
+experiment.end()
 
