@@ -41,9 +41,9 @@ optimizer_D = torch.optim.Adam(discriminator.parameters(), lr=lr, betas=(0.5, 0.
 FloatTensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
 
-n_epochs = 200
+n_epochs = 20000
 step = 0
-for epoch in tqdm(range(n_epochs)):
+for epoch in range(n_epochs):
     for i, (labels, shapes) in enumerate(dataloader):
         batch_size = shapes.shape[0]
         # Adversarial ground truths
@@ -81,10 +81,10 @@ for epoch in tqdm(range(n_epochs)):
         experiment.log_metric("d_loss", d_loss.item(), step=step)
         experiment.log_metric("g_loss", g_loss.item(), step=step)
 
-        # print(
-        #     "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
-        #     % (epoch, n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
-        # )
+        print(
+            "[Epoch %d/%d] [Batch %d/%d] [D loss: %f] [G loss: %f]"
+            % (epoch, n_epochs, i, len(dataloader), d_loss.item(), g_loss.item())
+        )
 
 torch.save(generator.state_dict(), './generator.pth')
 experiment.end()
