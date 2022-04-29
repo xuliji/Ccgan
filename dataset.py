@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import torch
 from torch.utils.data.dataset import Dataset
+from torch.utils.data import DataLoader
 
 
 class MyDataset(Dataset):
@@ -40,13 +41,13 @@ class MyDataset(Dataset):
     def __len__(self):
         return len(self.names_list)
 
-# if __name__ == '__main__':
-#     data = MyDataset(shapes_dir='./picked_uiuc', target_dir='./result/07', names_txt='./picked_uiuc_list.txt',
-#                      alpha=0)
-#
-#     train_loader = DataLoader(data, batch_size=10, shuffle=False)
-#     sum = 0
-#     for i, data in enumerate(train_loader):
-#         print(data[0].shape, data[1].shape)
-#         sum += 1
-#     print(sum)
+if __name__ == '__main__':
+    data = MyDataset(shapes_dir='./picked_uiuc', target_dir='./result/07', names_txt='./picked_uiuc_list.txt',
+                     alpha=0)
+
+    train_loader = DataLoader(data, batch_size=10, shuffle=False)
+    sum = 0
+    for i, data in enumerate(train_loader):
+        print(data[0].shape, data[1].shape)
+        sum += 1
+    print(sum)
